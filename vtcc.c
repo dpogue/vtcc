@@ -98,7 +98,6 @@ void set_up_screen(void) {
 
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
-    printf("\033[?3l");
     printf("\033[?6l");
     printf("\033[?7h");
     printf("\033[H");
@@ -119,8 +118,7 @@ void set_up_screen(void) {
 
 void add_line(const char* line) {
     size_t length = 0;
-    size_t lines = 1;
-    size_t i = 0;
+    int lines = 1;
 
     length = textlen(line);
     if (length > w.ws_col) {
@@ -129,13 +127,7 @@ void add_line(const char* line) {
 
     printf("\033[s");
     printf("\033[3;1H");
-    for (i = 0; i < lines; i++) {
-        printf("\033M");
-    }
-    for (i = 0; i < lines; i++) {
-        printf("\033[2K");
-        printf("\033[B");
-    }
+    printf("\033[%dL", lines);
     printf("\033[3;1H");
 
     printf("%s", line);
