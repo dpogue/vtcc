@@ -259,7 +259,7 @@ void cc_set_nickname(CyanChat* cc, const char* nick) {
         return;
     }
 
-    msg = malloc(sizeof(nick) + 16);
+    msg = malloc(strlen(nick) + 16);
     sprintf(msg, "10|%s\r\n", nick);
 
     cc->tmp_nickname = strdup(nick);
@@ -284,7 +284,7 @@ void cc_send_broadcast(CyanChat* cc, const char* line) {
         return;
     }
 
-    msg = malloc(sizeof(line) + 16);
+    msg = malloc(strlen(line) + 16);
     sprintf(msg, "30|^1%s\r\n", line);
 
     write(cc->socket, msg, strlen(msg));
@@ -346,13 +346,11 @@ CCUser* cc_user_from_username(const char* username) {
     tmp++;
 
     for (i = 0; tmp[i] != ',' && tmp[i] != '\0'; i++) { }
-    nick = strndup(tmp, i++);
-    if (i == strlen(tmp)) {
-        free(user);
-        return NULL;
+    nick = strndup(tmp, i);
+    if (i++ != strlen(tmp)) {
+        tmp += i;
+        addr = strdup(tmp);
     }
-    tmp += i;
-    addr = strdup(tmp);
 
     free(user);
 
