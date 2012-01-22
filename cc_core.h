@@ -37,6 +37,8 @@ int cc_has_nickname(CyanChat* cc);
 
 void cc_send_broadcast(CyanChat* cc, const char* line);
 
+void cc_send_private(CyanChat* cc, CCUser* user, const char* line);
+
 
 /***************************************************************************** 
  ** CyanChat User Functions

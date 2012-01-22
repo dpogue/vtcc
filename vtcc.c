@@ -86,6 +86,8 @@ int main(int argc, char** argv) {
 
     rl_callback_handler_remove();
 
+    cc_free(&cc);
+
     printf("\033[H");
     printf("\033[2J");
     fflush(stdout);
@@ -128,7 +130,6 @@ void add_line(const char* line) {
     printf("\033[s");
     printf("\033[3;1H");
     printf("\033[%dL", lines);
-    printf("\033[3;1H");
 
     printf("%s", line);
 
@@ -193,6 +194,18 @@ void on_input(char* line) {
     } else {
         if (!cc_has_nickname(cc)) {
             add_line("Not Logged in!");
+        } else if(strstr(line, "/pm ") == line) {
+            char* saveptr = NULL;
+            char* display = malloc(strlen(line) + 64);
+            char* name = strtok_r(line + 4, ",", &saveptr);
+            CCUser* user = cc_user_from_username(name);
+            cc_send_private(cc, user, saveptr);
+            sprintf(display, "%sSent Private Message to %s[%s]%s %s", 
+                    kRed, get_colour(cc_user_get_level(user)),
+                    cc_user_get_nickname(user), kNormal, saveptr);
+            add_line(display);
+            free(display);
+            cc_user_free(&user);
         } else {
             cc_send_broadcast(cc, line);
         }

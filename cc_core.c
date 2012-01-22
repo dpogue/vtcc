@@ -292,6 +292,21 @@ void cc_send_broadcast(CyanChat* cc, const char* line) {
     free(msg);
 }
 
+void cc_send_private(CyanChat* cc, CCUser* user, const char* line) {
+    char* msg = NULL;
+
+    if(cc == NULL || cc->socket == -1 || line == NULL) {
+        return;
+    }
+
+    msg = malloc(strlen(line) + strlen(user->nickname) + 16);
+    sprintf(msg, "20|%d%s|^1%s\r\n", user->level, user->nickname, line);
+
+    write(cc->socket, msg, strlen(msg));
+
+    free(msg);
+}
+
 /* Private functions */
 void cc_send_welcome(CyanChat* cc) {
     char* msg = NULL;
